@@ -65,12 +65,12 @@ resource "aws_lambda_function" "hello_world_java" {
     filename = "${var.lambda_payload_filename}"
 
     role = "${aws_iam_role.lambda_iam_role.arn}"
-    handler = "uk.co.danielbryant.exp.helloworld.Hello"
+    handler = "uk.co.danielbryant.exp.helloworld.HelloLambdaHandler"
     source_code_hash = "${base64sha256(file(var.lambda_payload_filename))}"
     runtime = "java8"
     environment {
         variables = {
-            from = "London"
+            currentLocation = "London"
         }
     }
 }
