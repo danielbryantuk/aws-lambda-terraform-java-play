@@ -1,8 +1,11 @@
 # aws-lambda-terraform-java
 
 This is a *very* simple demonstration of the code required to deploy a Java
-[AWS Lambda Function](https://aws.amazon.com/lambda/) and expose the Function
-with [AWS API Gateway](https://aws.amazon.com/api-gateway/) via [HashiCorp's Terraform](https://www.terraform.io/) programmable infrastructure tool.
+[AWS Lambda Function](https://aws.amazon.com/lambda/) and expose the function
+with [AWS API Gateway](https://aws.amazon.com/api-gateway/). The infrastructure
+configuration and deployment is executed using [HashiCorp's Terraform](https://www.terraform.io/) programmable infrastructure tool.
+
+## Get started
 
 To get started simply create a ```terraform.tfvars``` file in ```terraform```
 directory with your AWS account/IAM User details. Your IAM User must have
@@ -27,6 +30,8 @@ and runs Terraform to upload and configure the Lambda function and API Gateway.
 ```
 $ ./build_and_deploy.sh
 ```
+
+## Manually test your function
 After a successful run, something similar to the output below should be visible:
 
 ```
@@ -41,13 +46,16 @@ copy/paste the curl command (minus the ```curl = ``` part) e.g.
 curl -H 'Content-Type: application/json' -X POST -d '{"name": "Daniel"}' https://XXXXXXXXXX.execute-api.eu-west-1.amazonaws.com/beta/helloworld
 ```
 
+## Rinse and repeat
 You can make changes to the Java application and run the ```build_and_deploy.sh```
 script repeatedly to update the Lambda Function deployed into AWS.
 
+## Tidy up when finished!
 When you are finished, don't forget to shut your infrastructure down:
 
 ```
 $ ./destroy.sh
 ```
 
+## Disclaimer
 Please note: I'm not responsible for any costs incurred within your AWS account :-)
