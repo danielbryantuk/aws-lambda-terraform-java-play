@@ -4,8 +4,8 @@ provider "aws" {
     region = "${var.region}"
 }
 
-resource "aws_iam_role" "lambda_iam_role" {
-    name = "lambda_iam_role"
+resource "aws_iam_role" "lambda_apigateway_iam_role" {
+    name = "lambda_apigateway_iam_role"
     assume_role_policy = <<POLICY
 {
   "Version": "2012-10-17",
@@ -25,7 +25,7 @@ POLICY
 
 resource "aws_iam_role_policy" "lambda_policy" {
     name   = "lambda_policy"
-    role   = "${aws_iam_role.lambda_iam_role.id}"
+    role   = "${aws_iam_role.lambda_apigateway_iam_role.id}"
     policy = <<POLICY
 {
   "Version": "2012-10-17",
@@ -60,14 +60,14 @@ resource "aws_iam_role_policy" "lambda_policy" {
 POLICY
 }
 
-resource "aws_lambda_function" "hello_world_java" {
-    function_name = "hello_world_java"
+resource "aws_lambda_function" "hello_world_function" {
+    function_name = "hello_world_function"
     filename = "${var.lambda_payload_filename}"
 
-    role = "${aws_iam_role.lambda_iam_role.arn}"
-    handler = "uk.co.danielbryant.exp.helloworld.HelloLambdaHandler"
+    role = "${aws_iam_role.lambda_apigateway_iam_role.arn}"
+    handler = "${var.lambda_function_handler}"
     source_code_hash = "${base64sha256(file(var.lambda_payload_filename))}"
-    runtime = "java8"
+    runtime = "${var.lambda_runtime}"
     environment {
         variables = {
             currentLocation = "London"
@@ -75,10 +75,10 @@ resource "aws_lambda_function" "hello_world_java" {
     }
 }
 
-resource "aws_lambda_permission" "hello_world_java" {
+resource "aws_lambda_permission" "hello_world_function" {
   statement_id = "AllowExecutionFromApiGateway"
   action = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_function.hello_world_java.function_name}"
+  function_name = "${aws_lambda_function.hello_world_function.function_name}"
   principal = "apigateway.amazonaws.com"
   source_arn = "arn:aws:execute-api:${var.region}:${var.account_id}:${aws_api_gateway_rest_api.hello_world_api.id}/${aws_api_gateway_deployment.hello_world_deploy.stage_name}/${aws_api_gateway_integration.hello_world_integration.integration_http_method}${aws_api_gateway_resource.hello_world_api_gateway.path}"
 }
@@ -91,30 +91,30 @@ resource "aws_api_gateway_rest_api" "hello_world_api" {
 resource "aws_api_gateway_resource" "hello_world_api_gateway" {
   rest_api_id = "${aws_api_gateway_rest_api.hello_world_api.id}"
   parent_id = "${aws_api_gateway_rest_api.hello_world_api.root_resource_id}"
-  path_part = "helloworld"
+  path_part = "${var.api_path}"
 }
 
-resource "aws_api_gateway_method" "post_name_method" {
+resource "aws_api_gateway_method" "hello_world_method" {
   rest_api_id = "${aws_api_gateway_rest_api.hello_world_api.id}"
   resource_id = "${aws_api_gateway_resource.hello_world_api_gateway.id}"
-  http_method = "POST"
+  http_method = "${var.hello_world_http_method}"
   authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "hello_world_integration" {
   rest_api_id = "${aws_api_gateway_rest_api.hello_world_api.id}"
   resource_id = "${aws_api_gateway_resource.hello_world_api_gateway.id}"
-  http_method = "${aws_api_gateway_method.post_name_method.http_method}"
-  integration_http_method = "${aws_api_gateway_method.post_name_method.http_method}"
+  http_method = "${aws_api_gateway_method.hello_world_method.http_method}"
+  integration_http_method = "${aws_api_gateway_method.hello_world_method.http_method}"
   type = "AWS"
-  uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.account_id}:function:${aws_lambda_function.hello_world_java.function_name}/invocations"
-  credentials = "arn:aws:iam::${var.account_id}:role/${aws_iam_role.lambda_iam_role.name}"
+  uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.account_id}:function:${aws_lambda_function.hello_world_function.function_name}/invocations"
+  credentials = "arn:aws:iam::${var.account_id}:role/${aws_iam_role.lambda_apigateway_iam_role.name}"
 }
 
-resource "aws_api_gateway_method_response" "all_good" {
+resource "aws_api_gateway_method_response" "200" {
   rest_api_id = "${aws_api_gateway_rest_api.hello_world_api.id}"
   resource_id = "${aws_api_gateway_resource.hello_world_api_gateway.id}"
-  http_method = "${aws_api_gateway_method.post_name_method.http_method}"
+  http_method = "${aws_api_gateway_method.hello_world_method.http_method}"
   response_models = {
     "application/json" = "Empty"
   }
@@ -125,13 +125,13 @@ resource "aws_api_gateway_integration_response" "hello_world_integration_respons
   depends_on  = ["aws_api_gateway_integration.hello_world_integration"]
   rest_api_id = "${aws_api_gateway_rest_api.hello_world_api.id}"
   resource_id = "${aws_api_gateway_resource.hello_world_api_gateway.id}"
-  http_method = "${aws_api_gateway_method.post_name_method.http_method}"
-  status_code = "${aws_api_gateway_method_response.all_good.status_code}"
+  http_method = "${aws_api_gateway_method.hello_world_method.http_method}"
+  status_code = "${aws_api_gateway_method_response.200.status_code}"
 }
 
 resource "aws_api_gateway_deployment" "hello_world_deploy" {
   depends_on  = ["aws_api_gateway_integration.hello_world_integration"]
-  stage_name  = "beta"
+  stage_name  = "${var.api_env_stage_name}"
   rest_api_id = "${aws_api_gateway_rest_api.hello_world_api.id}"
 }
 
