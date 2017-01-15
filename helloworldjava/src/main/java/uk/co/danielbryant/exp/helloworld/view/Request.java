@@ -7,7 +7,7 @@ public class Request {
     public Request() {
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 

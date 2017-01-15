@@ -4,10 +4,7 @@ public class Response {
 
     private String output;
 
-    public Response() {
-    }
-
-    public void setOutput(String output) {
+    public Response(final String output) {
         this.output = output;
     }
 
