@@ -4,12 +4,12 @@ resource "aws_lambda_function" "hello_world_function" {
 
   role             = "${aws_iam_role.lambda_apigateway_iam_role.arn}"
   handler          = "${var.lambda_function_handler}"
-  source_code_hash = "${base64sha256(file(var.lambda_payload_filename))}"
+  source_code_hash = "${filebase64sha256((var.lambda_payload_filename))}"
   runtime          = "${var.lambda_runtime}"
 
   environment {
     variables = {
-      currentLocation = "London"
+      currentLocation = "Novato"
     }
   }
 }

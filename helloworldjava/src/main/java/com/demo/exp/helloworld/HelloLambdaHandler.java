@@ -1,11 +1,11 @@
-package uk.co.danielbryant.exp.helloworld;
+package com.demo.exp.helloworld;
 
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import uk.co.danielbryant.exp.helloworld.service.HelloService;
-import uk.co.danielbryant.exp.helloworld.view.Request;
-import uk.co.danielbryant.exp.helloworld.view.Response;
+import com.demo.exp.helloworld.service.HelloService;
+import com.demo.exp.helloworld.view.Request;
+import com.demo.exp.helloworld.view.Response;
 
 public class HelloLambdaHandler implements RequestHandler<Request, Response> {
 

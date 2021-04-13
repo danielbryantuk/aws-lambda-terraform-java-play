@@ -1,4 +1,4 @@
-package uk.co.danielbryant.exp.helloworld.view;
+package com.demo.exp.helloworld.view;
 
 public class Request {
 
