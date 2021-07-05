@@ -11,7 +11,7 @@ variable "lambda_payload_filename" {
 }
 
 variable "lambda_function_handler" {
-  default = "uk.co.danielbryant.exp.helloworld.HelloLambdaHandler"
+  default = "com.emilionicoli.exp.helloworld.HelloLambdaHandler"
 }
 
 variable "lambda_runtime" {

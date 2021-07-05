@@ -20,7 +20,7 @@ POLICY
 
 resource "aws_iam_role_policy" "lambda_policy" {
   name = "lambda_policy"
-  role = "${aws_iam_role.lambda_apigateway_iam_role.id}"
+  role = aws_iam_role.lambda_apigateway_iam_role.id
 
   policy = <<POLICY
 {

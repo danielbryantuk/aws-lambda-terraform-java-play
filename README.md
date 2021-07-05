@@ -37,13 +37,13 @@ After a successful run, something similar to the output below should be visible:
 ```
 Outputs:
 
-curl = curl -H 'Content-Type: application/json' -X POST -d '{"name": "Daniel"}' https://XXXXXXXXXX.execute-api.eu-west-1.amazonaws.com/beta/helloworld
+curl = curl -H 'Content-Type: application/json' -X POST -d '{"name": "Emilio"}' https://XXXXXXXXXX.execute-api.eu-west-1.amazonaws.com/beta/helloworld
 ```
 To test your Lambda deployed behind the API Gateway all you need to do is
 copy/paste the curl command (minus the ```curl = ``` part) e.g.
 
 ```
-curl -H 'Content-Type: application/json' -X POST -d '{"name": "Daniel"}' https://XXXXXXXXXX.execute-api.eu-west-1.amazonaws.com/beta/helloworld
+curl -H 'Content-Type: application/json' -X POST -d '{"name": "Emilio"}' https://XXXXXXXXXX.execute-api.eu-west-1.amazonaws.com/beta/helloworld
 ```
 
 ## Rinse and repeat
